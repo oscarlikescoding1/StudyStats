@@ -62,14 +62,12 @@ print("====================\n")
 
 
 cell = subject_read["sheets"][0]["data"][0]["rowData"][0]["values"][0] # Response of subject_read is heavily nested. This walks it down through the first sheet, the first data, the frst rowData, first cell. Because we only requested for one cell, it is very simple to process so we just define it as the first index (0th index) of each category.
-
 # Printing cell for visualization 
 print("======= Cell:=======")
 print(cell)
 print("====================\n")
 
 rule = cell.get("dataValidation") # Gets the data validation part of the "cell", up till here we are just extracting data step by step
-
 # Printing rule for visualization 
 print("======= Rule:=======")
 print(rule)
