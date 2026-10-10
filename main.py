@@ -5,6 +5,7 @@ from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
 import pandas as pd
+import numpy as np
 
 # Loading .env variables
 load_dotenv() # reads variables from a .env file and sets them in os.environ
@@ -100,3 +101,36 @@ print("== Subject options:==")
 print(subject_options)
 print("====================\n")
 
+
+# Reading values into a numpy array then into a pandas dataframe
+npArray = np.array(values, dtype = object) # Converting values to a numpy array, dtype helps to specify that the array is quite messy and contains objects, rather than a standard array.
+myDF = pd.DataFrame(npArray) # Reading a numpy array into a pandas dataframe using DataFrame function in pandas. 
+print(myDF.head()) # Visualizing top 5 results of myDF dataframe, works as intended.
+
+
+# Separating and segmenting different parts of the spreadsheet
+assignmentTarget = "Weekly assignments / practice / revision"
+examTarget = "Exams"
+externalTarget = "External coursework / activities"
+completedTarget = "Completed"
+
+# Find row function to find where each row's index is
+def findRows(df, target):
+    # Enumerate is a function in python used to keep track of both the index and the values in an iterable
+    for pos, cell in enumerate(df[0]):
+        # Error check that if the data type passed in (the current cell/row) is either a list or a tuple and that the cell isn't empty
+        if isinstance(cell, (list, tuple)) and len(cell) > 0:
+            # Checks if the non-trailing space and lowered version of both the target and the value at current row at index 0 are equal
+            if str(cell[0]).strip().lower() == target.strip().lower():
+                return pos
+    return None
+
+assignmentPos = findRows(myDF, assignmentTarget)
+examPos = findRows(myDF,examTarget)
+externalPos = findRows(myDF, externalTarget)
+completedPos = findRows(myDF, completedTarget)
+
+print (assignmentPos)
+print (examPos)
+print (externalPos)
+print (completedPos)
