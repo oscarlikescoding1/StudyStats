@@ -140,25 +140,6 @@ print("====================\n")
 
 
 #===============================================================================
-# DATA CLEANING AND FORMATTING MyDF: 
-# Data cleaning and managing dataframe structure issue
-print("== Shape of MyDF:==")
-print(myDF.shape)
-print("====================\n")
-
-header = myDF.iloc[0]
-
-print("== Type of header:==")
-print(type(header))
-print("====================\n")
-
-print("== Visualization of header:==")
-print (header)
-print("====================\n")
-
-
-
-#===============================================================================
 # SEGMENTATION OF PARTS IN MyDF: 
 assignmentTarget = "Weekly assignments / practice / revision"
 examTarget = "Exams"
@@ -182,15 +163,11 @@ def findRows(df, target):
 # TODO: Write another checker that helps to find the column names themselves 
 # and add to all the separate dataframes
 
+# Finding positions of all segments
 assignmentPos = findRows(myDF, assignmentTarget)
 examPos = findRows(myDF,examTarget)
 externalPos = findRows(myDF, externalTarget)
 completedPos = findRows(myDF, completedTarget)
-
-print (assignmentPos)
-print (examPos)
-print (externalPos)
-print (completedPos)
 
 # Creating segmentations for task types.
 assignmentDF = myDF.iloc[(assignmentPos + 1):examPos,:]
@@ -200,12 +177,61 @@ completedDF = myDF.iloc[(completedPos + 1):,:]
 
 
 
+#===============================================================================
+# DATA CLEANING AND FORMATTING MyDF: 
+# Data cleaning and managing dataframe structure issue
+print("== Shape of MyDF:==")
+print(myDF.shape)
+print("====================\n")
 
+header = myDF.iloc[0]
 
+print("== Type of header:==")
+print(type(header))
+print("====================\n")
 
+print("== Visualization of header:==")
+print (header)
+print("====================\n")
 
+# Creating correctly column-labeled dataframes
+labeledAssignmentDF = pd.concat([header, assignmentDF])
+labeledExamDF = pd.concat([header, examDF])
+labeledExternalDF = pd.concat([header, externalDF])
+labeledCompletedDF = pd.concat([header, completedDF])
 
+print(labeledAssignmentDF.head())
+print(labeledAssignmentDF.columns)
 
+# Removing all empty instances
+noEmptyAssignmentDF = labeledAssignmentDF[labeledAssignmentDF[0].str.len() > 0]
+noEmptyExamDF = labeledExamDF[labeledExamDF[0].str.len() > 0]
+noEmptyExternalDF = labeledExternalDF[labeledExternalDF[0].str.len() > 0]
+noEmptyCompletedDF = labeledCompletedDF[labeledCompletedDF[0].str.len() > 0]
+
+# Converting the dataframes into multi-column dataframes (making it actually 
+# readable and useful to analyze)
+expandedAssignmentDF = pd.DataFrame(noEmptyAssignmentDF[0].tolist(), index=noEmptyAssignmentDF.index) 
+expandedExamDF = pd.DataFrame(noEmptyExamDF[0].tolist(), index=noEmptyExamDF.index)
+expandedExternalDF = pd.DataFrame(noEmptyExternalDF[0].tolist(), index=noEmptyExternalDF.index)
+expandedCompletedDF = pd.DataFrame(noEmptyCompletedDF[0].tolist(), index=noEmptyCompletedDF.index)
+
+# Printing all the segmented, cleaned, and organized dataframes:
+print("== Visualization of expandedAssignmentDF:==")
+print (expandedAssignmentDF.head(3))
+print("============================================\n")
+
+print("== Visualization of expandedExamDF:==")
+print (expandedExamDF.head(3))
+print("============================================\n")
+
+print("== Visualization of expandedExternalDF:==")
+print (expandedExternalDF.head(3))
+print("============================================\n")
+
+print("== Visualization of expandedCompletedDF:==")
+print (expandedCompletedDF.head(3))
+print("============================================\n")
 
 
 # Initial test analysis 1, Finding the average task length for a specific 
