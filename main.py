@@ -325,3 +325,6 @@ for i in subject_options:
 # Tried to add segmentation function to the program and fixed some comment 
 # formating issues. Thinking of adding function the read the color of highlight 
 # of the task to label the importance and do further analysis.
+
+# an analysis can be made that if there are too many missed logs of a subject's 
+# time, ask the user if there is a reason or something
