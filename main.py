@@ -298,7 +298,7 @@ def plotGraph (subject) :
         ax.plot(subjectTimeDif, marker = "o") 
         ax.set_xlabel("Task number (arbitrary)") # Setting the xlabel
         ax.set_ylabel("Different in time (min)") # Setting the ylabel
-        title = subject.capitalize() + " tasks time difference"
+        title = subject.capitalize() + " tasks time difference (in minutes)"
         ax.set_title(title) 
         ax.grid(alpha=0.3) 
         ax.axhline(subjectMean, color='r', ls='--') 
@@ -313,46 +313,14 @@ def plotGraph (subject) :
     else:
         print("Something went wrong.")
 
-plotGraph("Psychology")
-plotGraph("Math")
-plotGraph("Computer Science")
-plotGraph("Food Science")
-plotGraph("The Data Mine")
-plotGraph("External")
+for i in subject_options:
+    plotGraph(i)
 
-"""
-# Graphing Psychology as a test:
-psychTimeDif = dfs["Psychology"]["time dif. (min)"]
-pyschMean = psychTimeDif.mean()
-fig, ax = plt.subplots(figsize=(12, 5)) 
-ax.plot(psychTimeDif, marker = "o") 
-ax.set_xlabel("Task number (arbitrary)") # Setting the xlabel
-ax.set_ylabel("Different in time (min)") # Setting the ylabel
-ax.set_title("Psychology tasks time difference") # Setting the title
-ax.grid(alpha=0.3) 
-ax.axhline(pyschMean, color='r', ls='--') 
-ax.text(1, pyschMean, f'mean: {pyschMean:.3f}\n',
-        ha='right', va='center', color='r', transform=ax.get_yaxis_transform())
 
-for xy in zip(psychTimeDif.index, psychTimeDif.values):                                  
-    ax.annotate('(%s, %s)' % xy, xy=xy, textcoords='data') 
-
-ax.grid()
-plt.tight_layout()
-plt.show()
+# BUILDING A CHECKER TO SEE IF THE ENTRY IS VALID OR NOT, 
 
 #https://stackoverflow.com/questions/22272081/label-data-points-on-plot
 #https://stackoverflow.com/questions/68326369/drawing-horizontal-mean-average-line-across-a-scatterplot
-"""
-
-
-
-
-
-
-
-
-
 
 # Tried to add segmentation function to the program and fixed some comment 
 # formating issues. Thinking of adding function the read the color of highlight 
