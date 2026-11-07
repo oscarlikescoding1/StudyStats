@@ -216,6 +216,21 @@ expandedExamDF = pd.DataFrame(noEmptyExamDF[0].tolist(), index=noEmptyExamDF.ind
 expandedExternalDF = pd.DataFrame(noEmptyExternalDF[0].tolist(), index=noEmptyExternalDF.index)
 expandedCompletedDF = pd.DataFrame(noEmptyCompletedDF[0].tolist(), index=noEmptyCompletedDF.index)
 
+
+# Dropping the top initial column and making it row 0
+expandedAssignmentDF.columns = expandedAssignmentDF.iloc[0]
+expandedAssignmentDF = expandedAssignmentDF.iloc[1:].reset_index(drop=True)
+
+expandedExamDF.columns = expandedExamDF.iloc[0]
+expandedExamDF = expandedExamDF.iloc[1:].reset_index(drop=True)
+
+expandedExternalDF.columns = expandedExternalDF.iloc[0]
+expandedExternalDF = expandedExternalDF.iloc[1:].reset_index(drop=True)
+
+expandedCompletedDF.columns = expandedCompletedDF.iloc[0]
+expandedCompletedDF = expandedCompletedDF.iloc[1:].reset_index(drop=True)
+
+
 # Printing all the segmented, cleaned, and organized dataframes:
 print("== Visualization of expandedAssignmentDF:==")
 print (expandedAssignmentDF.head(3))
@@ -232,6 +247,8 @@ print("============================================\n")
 print("== Visualization of expandedCompletedDF:==")
 print (expandedCompletedDF.head(3))
 print("============================================\n")
+
+print(expandedCompletedDF.columns.tolist())
 
 
 # Initial test analysis 1, Finding the average task length for a specific 
