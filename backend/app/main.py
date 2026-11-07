@@ -20,7 +20,7 @@ study_stats_key = os.getenv("study_stats_key")
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # Gets the service account file with key.json information (this is secret)
-SERVICE_ACCOUNT_FILE = "/Users/oscar/Desktop/Hobbies/Personal project/StudyStats/key.json" 
+SERVICE_ACCOUNT_FILE = "/Users/oscar/Desktop/Hobbies/Personal project/StudyStats/backend/app/key.json" 
 
 # Creating credentials from service acconut
 credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes = SCOPES)
