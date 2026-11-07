@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import pandas as pd
 import numpy as np
 import io
+import matplotlib.pyplot as plt
 
 #===============================================================================
 # SETTING UP ENVIRONMENT FOR SHEET READING (GOOGLE SHEETS API):
@@ -220,15 +221,44 @@ expandedCompletedDF = pd.DataFrame(noEmptyCompletedDF[0].tolist(), index=noEmpty
 # Dropping the top initial column and making it row 0
 expandedAssignmentDF.columns = expandedAssignmentDF.iloc[0]
 expandedAssignmentDF = expandedAssignmentDF.iloc[1:].reset_index(drop=True)
+expandedAssignmentDF.columns.name = None
 
 expandedExamDF.columns = expandedExamDF.iloc[0]
 expandedExamDF = expandedExamDF.iloc[1:].reset_index(drop=True)
+expandedExamDF.columns.name = None
 
 expandedExternalDF.columns = expandedExternalDF.iloc[0]
 expandedExternalDF = expandedExternalDF.iloc[1:].reset_index(drop=True)
+expandedExternalDF.columns.name = None
 
 expandedCompletedDF.columns = expandedCompletedDF.iloc[0]
 expandedCompletedDF = expandedCompletedDF.iloc[1:].reset_index(drop=True)
+expandedCompletedDF.columns.name = None
+
+# Converting the time columns into pandas date_time type:
+
+# Before we convert, we need to standardize and read it so that it recognizes 
+# that number before hr/hrs is the hour and number between that and min/mins is 
+# the minutes that it takes:
+def real_to_minutes(text):
+    text = str(text).lower().replace("mins", "min").replace("hrs", "hr") .replace(" ", "")
+    hours = 0
+    mins = 0
+
+    if "hr" in text:
+        hour_part, text = text.split("hr", 1)   
+        hours = int(hour_part)      
+
+    if "min" in text:
+        mins = int(text.split("min")[0])    
+
+    return hours * 60 + mins
+
+# Calling the real_to_minutes function to parse time in actual and est of 
+# expandedCompletedDF into minute format for further anlaysis
+expandedCompletedDF["time est. (min)"] = expandedCompletedDF["time est."].apply(real_to_minutes)
+expandedCompletedDF["time act. (min)"] = expandedCompletedDF["time act."].apply(real_to_minutes)
+expandedCompletedDF["time dif. (min)"] = expandedCompletedDF["time act. (min)"] - expandedCompletedDF["time est. (min)"]
 
 
 # Printing all the segmented, cleaned, and organized dataframes:
@@ -248,14 +278,80 @@ print("== Visualization of expandedCompletedDF:==")
 print (expandedCompletedDF.head(3))
 print("============================================\n")
 
-print(expandedCompletedDF.columns.tolist())
+
+#===============================================================================
+# TEST ANALYSIS 1 (FINDING AVERAGE TASK LENGTH FOR SUBJECTS):
+# This part is AI-assisted, but my own explanation is that basicallly we create 
+# a dictionary of dataframes that loops through all options in subject_options 
+# (so that we can get a dataframe even if tasks don't exist for a specific 
+# subject), and then we can call by subject, this is sick shit.
+dfs = {
+    subject: expandedCompletedDF[expandedCompletedDF["subject"] == subject].reset_index(drop=True)
+    for subject in subject_options
+}
+
+def plotGraph (subject) :
+    if subject in subject_options:
+        subjectTimeDif = dfs[subject]["time dif. (min)"]
+        subjectMean = subjectTimeDif.mean()
+        fig, ax = plt.subplots(figsize=(12, 5)) 
+        ax.plot(subjectTimeDif, marker = "o") 
+        ax.set_xlabel("Task number (arbitrary)") # Setting the xlabel
+        ax.set_ylabel("Different in time (min)") # Setting the ylabel
+        title = subject.capitalize() + " tasks time difference"
+        ax.set_title(title) 
+        ax.grid(alpha=0.3) 
+        ax.axhline(subjectMean, color='r', ls='--') 
+        ax.text(1, subjectMean, f'mean: {subjectMean:.3f}\n',ha='right', va='center', color='r', transform=ax.get_yaxis_transform())
+
+        for xy in zip(subjectTimeDif.index, subjectTimeDif.values):                                  
+            ax.annotate('(%s, %s)' % xy, xy=xy, textcoords='data') 
+
+        ax.grid()
+        plt.tight_layout()
+        plt.show()
+    else:
+        print("Something went wrong.")
+
+plotGraph("Psychology")
+plotGraph("Math")
+plotGraph("Computer Science")
+plotGraph("Food Science")
+plotGraph("The Data Mine")
+plotGraph("External")
+
+"""
+# Graphing Psychology as a test:
+psychTimeDif = dfs["Psychology"]["time dif. (min)"]
+pyschMean = psychTimeDif.mean()
+fig, ax = plt.subplots(figsize=(12, 5)) 
+ax.plot(psychTimeDif, marker = "o") 
+ax.set_xlabel("Task number (arbitrary)") # Setting the xlabel
+ax.set_ylabel("Different in time (min)") # Setting the ylabel
+ax.set_title("Psychology tasks time difference") # Setting the title
+ax.grid(alpha=0.3) 
+ax.axhline(pyschMean, color='r', ls='--') 
+ax.text(1, pyschMean, f'mean: {pyschMean:.3f}\n',
+        ha='right', va='center', color='r', transform=ax.get_yaxis_transform())
+
+for xy in zip(psychTimeDif.index, psychTimeDif.values):                                  
+    ax.annotate('(%s, %s)' % xy, xy=xy, textcoords='data') 
+
+ax.grid()
+plt.tight_layout()
+plt.show()
+
+#https://stackoverflow.com/questions/22272081/label-data-points-on-plot
+#https://stackoverflow.com/questions/68326369/drawing-horizontal-mean-average-line-across-a-scatterplot
+"""
 
 
-# Initial test analysis 1, Finding the average task length for a specific 
-# subject in the completedDF dataframe:
 
 
-# subject_options for the subjects (honestly prolly don't even need it)
+
+
+
+
 
 
 # Tried to add segmentation function to the program and fixed some comment 
