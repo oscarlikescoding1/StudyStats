@@ -309,6 +309,8 @@ def plotGraph (subject) :
 
         ax.grid()
         plt.tight_layout()
+        savefile = subject + ".png"
+        plt.savefig(savefile)
         plt.show()
     else:
         print("Something went wrong.")
